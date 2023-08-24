@@ -6,15 +6,76 @@ import View.Menu;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ParticipantController {
-    public ArrayList<Participant> participantList = new ArrayList<>();
-    Menu menu = new Menu();
+    private Menu menu = new Menu();
+
+    // Fungsi untuk Update nama participant
+    public void updateParticipantName() {
+        // Memeriksa apakah daftar peserta kosong
+        if (menu.getParticipantList().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Daftar peserta kosong.");
+        } else {
+            // Mendapatkan daftar peserta yang aktif
+            ArrayList<Participant> activeParticipants = getActiveParticipants();
+
+            // Memeriksa apakah tidak ada peserta yang aktif
+            if (activeParticipants.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Tidak ada peserta yang aktif.");
+            } else {
+                String participantIndices = "Daftar Peserta:\n";
+                int index = 1;
+
+                // Membuat daftar peserta aktif beserta indeksnya
+                for (Participant participant : activeParticipants) {
+                    participantIndices += index + ": " + participant.getName() + "\n";
+                    index++;
+                }
+
+                // Meminta input indeks peserta yang ingin diupdate namanya
+                String input = menu.getInput(participantIndices +
+                        "Input indeks Peserta yang ingin mengupdate nama:");
+
+                if (input != null && !input.isEmpty() && input.matches("\\d+")) {
+                    int selectedUserIndex = Integer.parseInt(input) - 1;
+
+                    // Memeriksa apakah indeks yang dipilih valid
+                    if (selectedUserIndex >= 0 && selectedUserIndex < activeParticipants.size()) {
+                        Participant selectedParticipant = activeParticipants.get(selectedUserIndex);
+
+                        // Menampilkan konfirmasi update nama
+                        int response = JOptionPane.showConfirmDialog(
+                                null,
+                                "Apakah Anda yakin ingin mengupdate nama peserta " + selectedParticipant.getName() + "?",
+                                "Konfirmasi update",
+                                JOptionPane.YES_NO_OPTION
+                        );
+
+                        if (response == JOptionPane.YES_OPTION) {
+                            // Meminta input nama baru dan mengupdate nama peserta
+                            String newName = menu.getInput("Input Nama Baru:");
+                            if (newName != null && !newName.isEmpty()) {
+                                selectedParticipant.setName(newName);
+                                JOptionPane.showMessageDialog(null, "Nama peserta diupdate!");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Update dibatalkan.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Indeks tidak valid.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Input indeks tidak valid.");
+                }
+            }
+        }
+    }
 
     // Fungsi untuk Update alamat participant
     public void updateParticipantAddress() {
         // Memeriksa apakah daftar peserta kosong
-        if (participantList.isEmpty()) {
+        if (menu.getParticipantList().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Daftar peserta kosong.");
         } else {
             // Mendapatkan daftar peserta yang aktif
@@ -75,7 +136,7 @@ public class ParticipantController {
     // Fungsi untuk Update nomor telepon participant
     public void updateParticipantPhoneNumber() {
         // Memeriksa apakah daftar peserta kosong
-        if (participantList.isEmpty()) {
+        if (menu.getParticipantList().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Daftar peserta kosong.");
         } else {
             // Mengambil daftar peserta yang aktif
@@ -140,7 +201,7 @@ public class ParticipantController {
     // Fungsi untuk hapus participant
     public void deleteParticipant() {
         // Memeriksa apakah daftar peserta kosong
-        if (participantList.isEmpty()) {
+        if (menu.getParticipantList().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Daftar peserta kosong.");
         } else {
             // Mengambil daftar peserta yang aktif
@@ -185,7 +246,7 @@ public class ParticipantController {
                             JOptionPane.showMessageDialog(null, "Peserta Dihapus.");
 
                             // Menampilkan daftar peserta jika daftar tidak kosong
-                            if (!participantList.isEmpty()) {
+                            if (!menu.getParticipantList().isEmpty()) {
                                 showParticipants();
                             }
                         } else {
@@ -236,7 +297,7 @@ public class ParticipantController {
                     if (response == JOptionPane.YES_OPTION) {
                         // Mengaktifkan status peserta dan menambahkannya ke daftar peserta
                         participant.setActive(true);
-                        participantList.add(participant);
+                        menu.getParticipantList().add(participant);
 
                         // Menampilkan pesan berhasil ditambahkan
                         JOptionPane.showMessageDialog(null, "Peserta ditambahkan!");
@@ -252,16 +313,25 @@ public class ParticipantController {
         }
     }
 
-    // Fungsi untuk memvalidasi nomor telepon
+    // Fungsi untuk memvalidasi nomor telepon menggunakan regex
     private boolean isValidPhoneNumber(String phoneNumber) {
-        // Sesuaikan dengan aturan validasi nomor telepon yang Anda inginkan
-        // Contoh: valid jika hanya mengandung angka dan panjangnya 10-15 digit
-        return phoneNumber.matches("\\d+") && phoneNumber.length() >= 10 && phoneNumber.length() <= 15;
+        // Validasi nomor telepon dengan menggunakan regex yang hanya mengandung angka
+        // dan panjangnya 10-15 digit
+
+        /*
+        * Keterangan
+        * ^ : Ini adalah awal dari baris.
+        * \\d : Ini mencocokkan dengan digit (angka dari 0-9).
+        * {10,15} : Ini mencocokkan antara 10 dan 15 dari karakter sebelumnya,
+        * yang dalam hal ini adalah \\d. Jadi, {10,15} akan mencocokkan antara 10 dan 15 digit.
+        * $ : Ini adalah akhir dari baris.
+        * */
+        return phoneNumber.matches("^\\d{10,15}$");
     }
 
     // Fungsi untuk menampilkan daftar participant
     public void showParticipants() {
-        if (participantList.isEmpty()) {
+        if (menu.getParticipantList().isEmpty()) {
             // Jika daftar peserta kosong, tampilkan pesan bahwa daftar peserta kosong
             JOptionPane.showMessageDialog(null, "Daftar Peserta Kosong.");
         } else {
@@ -274,9 +344,9 @@ public class ParticipantController {
             int displayedIndex = 1;
 
             // Menambahkan baris-baris peserta ke dalam tabel
-            for (Participant participant : participantList) {
+            for (Participant participant : menu.getParticipantList()) {
                 if (participant.isActive()) {
-                    // Menambahkan baris baru dengan informasi peserta
+                    // Menambahkan baris baru ke dalam model tabel dengan data dari objek participant
                     tableModel.addRow(new Object[]{displayedIndex, participant.getName(), participant.getAddress(),
                             participant.getPhoneNumber()});
 
@@ -303,7 +373,7 @@ public class ParticipantController {
     // Fungsi untuk mendapatkan daftar peserta yang aktif
     private ArrayList<Participant> getActiveParticipants() {
         ArrayList<Participant> activeParticipants = new ArrayList<>();
-        for (Participant participant : participantList) {
+        for (Participant participant : menu.getParticipantList()) {
             // Memeriksa apakah peserta aktif, jika iya, tambahkan ke daftar peserta aktif
             if (participant.isActive()) {
                 activeParticipants.add(participant);

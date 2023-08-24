@@ -1,10 +1,18 @@
 package View;
 
 import Controller.ParticipantController;
+import Model.Participant;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Menu {
+    private List<Participant> participantList = new ArrayList<>();
+
+    public List<Participant> getParticipantList() {
+        return participantList;
+    }
 
     // Fungsi untuk menu utama
     public void mainMenu() {
@@ -16,10 +24,11 @@ public class Menu {
         while (continueLoop) {
             String menu = "Menu:\n" +
                     "1. Tambah Peserta\n" +
-                    "2. Update Alamat Peserta\n" +
-                    "3. Update Nomor Telepon Peserta\n" +
-                    "4. Hapus Peserta\n" +
-                    "5. Tampilkan Peserta\n" +
+                    "2. Update Nama Peserta\n" +
+                    "3. Update Alamat Peserta\n" +
+                    "4. Update Nomor Telepon Peserta\n" +
+                    "5. Hapus Peserta\n" +
+                    "6. Tampilkan Peserta\n" +
                     "Pilih opsi:";
 
             // Meminta input pilihan menu dari pengguna
@@ -41,12 +50,13 @@ public class Menu {
                 // Memproses pilihan menu yang dipilih pengguna
                 switch (input) {
                     case "1" -> app.addParticipant();
-                    case "2" -> app.updateParticipantAddress();
-                    case "3" -> app.updateParticipantPhoneNumber();
-                    case "4" -> app.deleteParticipant();
-                    case "5" -> app.showParticipants();
-                    default -> JOptionPane.showMessageDialog(null,
-                            "Pilihan tidak valid.");
+                    case "2" -> app.updateParticipantName();
+                    case "3" -> app.updateParticipantAddress();
+                    case "4" -> app.updateParticipantPhoneNumber();
+                    case "5" -> app.deleteParticipant();
+                    case "6" -> app.showParticipants();
+                    default -> JOptionPane.showMessageDialog(null, "Input tidak valid.",
+                            "Peringatan", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }

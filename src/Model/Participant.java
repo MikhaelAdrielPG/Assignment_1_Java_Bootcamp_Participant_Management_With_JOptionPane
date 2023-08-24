@@ -38,9 +38,4 @@ public class Participant {
     public void setActive(boolean active) {
         this.active = active;
     }
-
-    @Override
-    public String toString() {
-        return "Name: " + name + " | Address: " + address + " | Phone Number: " + phoneNumber;
-    }
 }
