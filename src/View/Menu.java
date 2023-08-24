@@ -4,25 +4,28 @@ import Controller.ParticipantController;
 
 import javax.swing.*;
 
-// Kelas Menu untuk mengatur antarmuka pengguna
 public class Menu {
-    // Fungsi utama untuk menampilkan menu utama
+
+    // Fungsi untuk menu utama
     public void mainMenu() {
-        ParticipantController app = new ParticipantController(); // Membuat instansi dari kelas ParticipantController
+        // Membuat objek controller untuk mengatur interaksi dengan peserta
+        ParticipantController app = new ParticipantController();
         boolean continueLoop = true;
 
-        // Loop utama untuk menu
+        // Memulai loop menu
         while (continueLoop) {
             String menu = "Menu:\n" +
                     "1. Tambah Peserta\n" +
-                    "2. Update Nama Peserta\n" +
-                    "3. Hapus Peserta\n" +
-                    "4. Tampilkan Peserta\n" +
+                    "2. Update Alamat Peserta\n" +
+                    "3. Update Nomor Telepon Peserta\n" +
+                    "4. Hapus Peserta\n" +
+                    "5. Tampilkan Peserta\n" +
                     "Pilih opsi:";
 
+            // Meminta input pilihan menu dari pengguna
             String input = getInput(menu);
             if (input == null) {
-                // Konfirmasi keluar
+                // Jika input adalah null, tampilkan konfirmasi keluar
                 int response = JOptionPane.showConfirmDialog(
                         null,
                         "Apakah Anda yakin ingin keluar dari aplikasi?",
@@ -30,15 +33,18 @@ public class Menu {
                         JOptionPane.YES_NO_OPTION
                 );
 
+                // Jika pengguna memilih keluar, hentikan loop
                 if (response == JOptionPane.YES_OPTION) {
-                    continueLoop = false; // Pengguna menekan "Cancel"
+                    continueLoop = false;
                 }
             } else {
+                // Memproses pilihan menu yang dipilih pengguna
                 switch (input) {
                     case "1" -> app.addParticipant();
-                    case "2" -> app.updateParticipantName();
-                    case "3" -> app.deleteParticipant();
-                    case "4" -> app.showParticipants();
+                    case "2" -> app.updateParticipantAddress();
+                    case "3" -> app.updateParticipantPhoneNumber();
+                    case "4" -> app.deleteParticipant();
+                    case "5" -> app.showParticipants();
                     default -> JOptionPane.showMessageDialog(null,
                             "Pilihan tidak valid.");
                 }
@@ -46,18 +52,22 @@ public class Menu {
         }
     }
 
-    // Fungsi untuk mendapatkan input dari pengguna
+    // Fungsi untuk input user pada saat tambah, update, hapus participant
     public String getInput(String message) {
         String input;
         do {
+            // Meminta input dari pengguna menggunakan dialog input
             input = JOptionPane.showInputDialog(message);
             if (input == null) {
-                return null; // Pengguna menekan "Cancel"
+                // Jika input adalah null, kembalikan null
+                return null;
             } else if (input.isEmpty()) {
-                JOptionPane.showMessageDialog(null,"Input tidak boleh kosong.",
-                        "Peringatan",JOptionPane.WARNING_MESSAGE);
+                // Jika input kosong, tampilkan peringatan
+                JOptionPane.showMessageDialog(null, "Input tidak boleh kosong.",
+                        "Peringatan", JOptionPane.WARNING_MESSAGE);
             }
         } while (input.isEmpty());
+        // Mengembalikan input yang diterima
         return input;
     }
 }
