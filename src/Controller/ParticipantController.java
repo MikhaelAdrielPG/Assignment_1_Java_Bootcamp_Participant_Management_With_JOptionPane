@@ -203,24 +203,49 @@ public class ParticipantController {
 
     // Fungsi untuk menambahkan info participant
     public void addParticipant() {
+        // Membuat objek peserta baru
         Participant participant = new Participant();
 
+        // Meminta input nama peserta dari pengguna
         String name = menu.getInput("Input Nama Peserta:");
         if (name != null) {
+            // Mengatur nama peserta
             participant.setName(name);
 
+            // Meminta input alamat peserta dari pengguna
             String address = menu.getInput("Input Alamat Peserta:");
             if (address != null) {
+                // Mengatur alamat peserta
                 participant.setAddress(address);
 
+                // Meminta input nomor telepon peserta dari pengguna
                 String phoneNumber = menu.getInput("Input Nomor Telepon Peserta:");
                 if (phoneNumber != null && isValidPhoneNumber(phoneNumber)) {
+                    // Mengatur nomor telepon peserta jika valid
                     participant.setPhoneNumber(phoneNumber);
-                    participant.setActive(true);
-                    participantList.add(participant);
 
-                    JOptionPane.showMessageDialog(null, "Peserta ditambahkan!");
+                    // Menampilkan konfirmasi penambahan peserta
+                    int response = JOptionPane.showConfirmDialog(
+                            null,
+                            "Apakah Anda yakin ingin menambahkan peserta:\nNama: " + participant.getName() + "\nAlamat: " + participant.getAddress() + "\nNomor Telepon: " + participant.getPhoneNumber(),
+                            "Konfirmasi Penambahan",
+                            JOptionPane.YES_NO_OPTION
+                    );
+
+                    // Memproses respon konfirmasi
+                    if (response == JOptionPane.YES_OPTION) {
+                        // Mengaktifkan status peserta dan menambahkannya ke daftar peserta
+                        participant.setActive(true);
+                        participantList.add(participant);
+
+                        // Menampilkan pesan berhasil ditambahkan
+                        JOptionPane.showMessageDialog(null, "Peserta ditambahkan!");
+                    } else {
+                        // Menampilkan pesan pembatalan penambahan
+                        JOptionPane.showMessageDialog(null, "Penambahan dibatalkan.");
+                    }
                 } else {
+                    // Menampilkan pesan kesalahan nomor telepon tidak valid
                     JOptionPane.showMessageDialog(null, "Nomor Telepon tidak valid.");
                 }
             }
