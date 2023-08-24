@@ -269,7 +269,7 @@ public class ParticipantController {
 
         // Meminta input nama peserta dari pengguna
         String name = menu.getInput("Input Nama Peserta:");
-        if (name != null) {
+        if (name != null && isValidName(name)) {
             // Mengatur nama peserta
             participant.setName(name);
 
@@ -282,34 +282,43 @@ public class ParticipantController {
                 // Meminta input nomor telepon peserta dari pengguna
                 String phoneNumber = menu.getInput("Input Nomor Telepon Peserta:");
                 if (phoneNumber != null && isValidPhoneNumber(phoneNumber)) {
-                    // Mengatur nomor telepon peserta jika valid
-                    participant.setPhoneNumber(phoneNumber);
+                    // Memeriksa apakah nomor telepon sudah ada dalam daftar peserta
+                    if (!isPhoneNumberAlreadyTaken(phoneNumber)) {
+                        // Mengatur nomor telepon peserta jika valid dan unik
+                        participant.setPhoneNumber(phoneNumber);
 
-                    // Menampilkan konfirmasi penambahan peserta
-                    int response = JOptionPane.showConfirmDialog(
-                            null,
-                            "Apakah Anda yakin ingin menambahkan peserta:\nNama: " + participant.getName() + "\nAlamat: " + participant.getAddress() + "\nNomor Telepon: " + participant.getPhoneNumber(),
-                            "Konfirmasi Penambahan",
-                            JOptionPane.YES_NO_OPTION
-                    );
+                        // Menampilkan konfirmasi penambahan peserta
+                        int response = JOptionPane.showConfirmDialog(
+                                null,
+                                "Apakah Anda yakin ingin menambahkan peserta:\nNama: " + participant.getName() + "\nAlamat: " + participant.getAddress() + "\nNomor Telepon: " + participant.getPhoneNumber(),
+                                "Konfirmasi Penambahan",
+                                JOptionPane.YES_NO_OPTION
+                        );
 
-                    // Memproses respon konfirmasi
-                    if (response == JOptionPane.YES_OPTION) {
-                        // Mengaktifkan status peserta dan menambahkannya ke daftar peserta
-                        participant.setActive(true);
-                        menu.getParticipantList().add(participant);
+                        // Memproses respon konfirmasi
+                        if (response == JOptionPane.YES_OPTION) {
+                            // Mengaktifkan status peserta dan menambahkannya ke daftar peserta
+                            participant.setActive(true);
+                            menu.getParticipantList().add(participant);
 
-                        // Menampilkan pesan berhasil ditambahkan
-                        JOptionPane.showMessageDialog(null, "Peserta ditambahkan!");
+                            // Menampilkan pesan berhasil ditambahkan
+                            JOptionPane.showMessageDialog(null, "Peserta ditambahkan!");
+                        } else {
+                            // Menampilkan pesan pembatalan penambahan
+                            JOptionPane.showMessageDialog(null, "Penambahan dibatalkan.");
+                        }
                     } else {
-                        // Menampilkan pesan pembatalan penambahan
-                        JOptionPane.showMessageDialog(null, "Penambahan dibatalkan.");
+                        // Menampilkan pesan bahwa nomor telepon sudah digunakan
+                        JOptionPane.showMessageDialog(null, "Nomor Telepon sudah digunakan oleh peserta lain.");
                     }
                 } else {
                     // Menampilkan pesan kesalahan nomor telepon tidak valid
                     JOptionPane.showMessageDialog(null, "Nomor Telepon tidak valid.");
                 }
             }
+        } else {
+            // Menampilkan pesan bahwa nama mengandung karakter khusus
+            JOptionPane.showMessageDialog(null, "Nama tidak boleh mengandung karakter khusus.");
         }
     }
 
@@ -381,4 +390,25 @@ public class ParticipantController {
         }
         return activeParticipants;
     }
+
+    // Fungsi untuk memeriksa apakah nomor telepon sudah ada dalam daftar peserta
+    private boolean isPhoneNumberAlreadyTaken(String phoneNumber) {
+        for (Participant participant : menu.getParticipantList()) {
+            if (participant.getPhoneNumber().equals(phoneNumber)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Fungsi untuk memvalidasi nama tanpa karakter khusus
+    private boolean isValidName(String name) {
+        // Pola regex: ^[a-zA-Z0-9\\s]*$
+        // ^            : Memastikan pola dimulai dari awal string.
+        // [a-zA-Z0-9\\s]* : Karakter yang diizinkan adalah huruf (baik besar maupun kecil), angka, dan spasi.
+        // *            : Mengizinkan karakter-karakter di atas untuk muncul 0 kali atau lebih.
+        // $            : Memastikan pola berakhir pada akhir string.
+        return name.matches("^[a-zA-Z0-9\\s]*$");
+    }
+
 }
